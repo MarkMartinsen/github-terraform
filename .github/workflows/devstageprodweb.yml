@@ -17,28 +17,28 @@ jobs:
   dev_stage:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
-    - name: Terraform init
-      run: terraform init
-      working-directory: ${{ env.WORKING_DIRECTORY }}
+      - name: Terraform init
+        run: terraform init
+        working-directory: ${{ env.WORKING_DIRECTORY }}
 
-    - name: Terraform workspace select or create dev
-      run: terraform workspace select dev || terraform workspace new dev
-      working-directory: ${{ env.WORKING_DIRECTORY }}
+      - name: Terraform workspace select or create dev
+        run: terraform workspace select dev || terraform workspace new dev
+        working-directory: ${{ env.WORKING_DIRECTORY }}
 
-    - name: Terraform plan dev
-      run: terraform plan --auto-approve
-      working-directory: ${{ env.WORKING_DIRECTORY }}
-    
-    - name: Terraform apply dev
-      run: terraform apply --auto-approve
-      working-directory: ${{ env.WORKING_DIRECTORY }}
+      - name: Terraform plan dev
+        run: terraform plan --auto-approve
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+      
+      - name: Terraform apply dev
+        run: terraform apply --auto-approve
+        working-directory: ${{ env.WORKING_DIRECTORY }}
 
-    - name: Terraform test dev
-      run: curl $(terraform output -raw static_website_endpoint)
-      working-directory: ${{ env.WORKING_DIRECTORY }}
+      - name: Terraform test dev
+        run: curl $(terraform output -raw static_website_endpoint)
+        working-directory: ${{ env.WORKING_DIRECTORY }}
 
 stage_prod:
   needs: dev_stage
