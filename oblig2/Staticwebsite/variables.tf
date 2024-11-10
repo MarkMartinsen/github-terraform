@@ -11,6 +11,26 @@ variable "rg_location" {
     default = "West Europe"
   
 }
+variable "rg_backend_name" {
+    description = "The name of the resource group for the backend storage account."
+    type        = string
+    default = "mm-rg-backend"
+
+}
+
+variable "rg_backend_location" {
+    description = "The location of the resource group for the backend storage account."
+    type        = string
+    default = "West Europe"
+
+}
+
+variable "sa_backend_name" {
+    description = "The name of the backend storage account."
+    type        = string
+    default = "mm-sa-backend"
+  
+}
 
 # Storage account variables
 variable "sa_name" {
