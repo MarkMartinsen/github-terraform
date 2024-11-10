@@ -3,7 +3,7 @@ name: Terraform CI/CD Pipeline
 on:
   push:
     branches:
-      - 'TerraformMain/StaticWebSite/**'
+      - 'TerraformMain/StaticWebSite/*'
   workflow_dispatch:
 
 env:
