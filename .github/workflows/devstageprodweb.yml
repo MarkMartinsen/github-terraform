@@ -6,15 +6,14 @@ on:
       - 'TerraformMain/StaticWebSite/**'
   workflow_dispatch:
 
-jobs:
-
-  env:
+env:
     ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
     ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
     ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
     ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
     WORKING_DIRECTORY: './TerraformMain/StaticWebSite'
 
+jobs:
   dev_stage:
     runs-on: ubuntu-latest
     steps:
@@ -40,65 +39,65 @@ jobs:
       - name: Terraform test dev
         run: curl $(terraform output -raw static_website_endpoint)
         working-directory: ${{ env.WORKING_DIRECTORY }}
+  
+  stage_prod:
+    needs: dev_stage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+  
+      - name: Terraform init
+        run: terraform init
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+  
+      - name: Terraform workspace select or create stage
+        run: terraform workspace select stage || terraform workspace new stage
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+  
+      - name: Terraform plan stage
+        run: terraform plan --auto-approve
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+      
+      - name: Terraform apply stage
+        run: terraform apply --auto-approve
+        working-directory: ${{ env.WWORKING_DIRECTORY }}
+  
+      - name: Terraform test stage
+        run: curl $(terraform output -raw static_website_endpoint)
+        working-directory: ${{ env.WORKING_DIRECTORY }}
 
-stage_prod:
-  needs: dev_stage
-  runs-on: ubuntu-latest
-  steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-
-    - name: Terraform init
-      run: terraform init
-      working-directory: ${{ env.WORKING_DIRECTORY }}
-
-    - name: Terraform workspace select or create stage
-      run: terraform workspace select stage || terraform workspace new stage
-      working-directory: ${{ env.WORKING_DIRECTORY }}
-
-    - name: Terraform plan stage
-      run: terraform plan --auto-approve
-      working-directory: ${{ env.WORKING_DIRECTORY }}
-    
-    - name: Terraform apply stage
-      run: terraform apply --auto-approve
-      working-directory: ${{ env.WWORKING_DIRECTORY }}
-
-    - name: Terraform test stage
-      run: curl $(terraform output -raw static_website_endpoint)
-      working-directory: ${{ env.WORKING_DIRECTORY }}
-
-prod:
-  needs: stage_prod
-  runs-on: ubuntu-latest
-  environment:
-    name: production
-    url: ${{ steps.get_web_endpoint.outputs.WEB_ENDPOINT }}
-  steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-
-    - name: Terraform init
-      run: terraform init
-      working-directory: ${{ env.WORKING_DIRECTORY }}
-
-    - name: Terraform workspace select or create prod
-      run: terraform workspace select prod || terraform workspace new prod
-      working-directory: ${{ env.WORKING_DIRECTORY }}
-
-    - name: Terraform plan prod
-      run: terraform plan --auto-approve
-      working-directory: ${{ env.WORKING_DIRECTORY }}
-    
-    - name: Terraform apply prod
-      run: terraform apply --auto-approve
-      working-directory: ${{ env.WORKING_DIRECTORY }}
-
-    - name: Terraform test prod
-      run: curl $(terraform output -raw static_website_endpoint)
-      working-directory: ${{ env.WWORKING_DIRECTORY }}
-    
-    - name: Get Web Endpoint
-      id: get_web_endpoint
-      run: echo "WEB_ENDPOINT=$(terraform output -raw static_website_endpoint)"
-      working-directory: ${{ env.WORKING_DIRECTORY }}
+  prod:
+    needs: stage_prod
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ steps.get_web_endpoint.outputs.WEB_ENDPOINT }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+  
+      - name: Terraform init
+        run: terraform init
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+  
+      - name: Terraform workspace select or create prod
+        run: terraform workspace select prod || terraform workspace new prod
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+  
+      - name: Terraform plan prod
+        run: terraform plan --auto-approve
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+      
+      - name: Terraform apply prod
+        run: terraform apply --auto-approve
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+  
+      - name: Terraform test prod
+        run: curl $(terraform output -raw static_website_endpoint)
+        working-directory: ${{ env.WWORKING_DIRECTORY }}
+      
+      - name: Get Web Endpoint
+        id: get_web_endpoint
+        run: echo "WEB_ENDPOINT=$(terraform output -raw static_website_endpoint)"
+        working-directory: ${{ env.WORKING_DIRECTORY }}
