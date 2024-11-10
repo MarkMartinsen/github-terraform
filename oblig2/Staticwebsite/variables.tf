@@ -42,6 +42,6 @@ variable "index_document" {
 variable "source_content" {
     description = "The source content for the index.html file."
     type        = string
-    default = "<h1>Made with Terraform</h1><p>Hello, World!!</p>"
+    default = "<h1>Made with Terraform</h1><p>Hello, World!</p>"
   
 }
