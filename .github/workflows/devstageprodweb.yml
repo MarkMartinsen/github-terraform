@@ -3,7 +3,7 @@ name: Terraform CI/CD Pipeline
 on:
   push:
     branches:
-      - 'TerraformMain/StaticWebSite/*'
+      - 'oblig2/staticwebsite/*'
   workflow_dispatch:
 
 env:
@@ -61,7 +61,7 @@ jobs:
       
       - name: Terraform apply stage
         run: terraform apply --auto-approve
-        working-directory: ${{ env.WWORKING_DIRECTORY }}
+        working-directory: ${{ env.WORKING_DIRECTORY }}
   
       - name: Terraform test stage
         run: curl $(terraform output -raw static_website_endpoint)
@@ -95,7 +95,7 @@ jobs:
   
       - name: Terraform test prod
         run: curl $(terraform output -raw static_website_endpoint)
-        working-directory: ${{ env.WWORKING_DIRECTORY }}
+        working-directory: ${{ env.WORKING_DIRECTORY }}
       
       - name: Get Web Endpoint
         id: get_web_endpoint
